@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace HTTP_Utility
 {
-    internal class HttpUtility : IHttpRequest
+    public class HttpUtility : IHttpRequest
     {
         private HttpClient client = new HttpClient();
 
@@ -17,40 +17,16 @@ namespace HTTP_Utility
         {
             set => client.BaseAddress = new Uri(value = value.EndsWith("/") ? value : value + "/");
         }
-        public string Token { get => Token; set => AddHeaders("Authorization", $"Bearer {Token}"); }
-
-        //public async Task<T> GetAsync<T>(string url)
-        //{
-
-        //    var response = await client.GetAsync(url);
-        //    var responseString = await response.Content.ReadAsStringAsync();
-        //    return JsonConvert.DeserializeObject<T>(responseString);
-        //}
-
-        //public async Task<T> PostAsync<T>(string url, object payload)
-        //{
-        //    var json = JsonConvert.SerializeObject(payload);
-        //    var content = new StringContent(json, Encoding.UTF8, "application/json");
-        //    var response = await client.PostAsync(url, content);
-        //    var responseString = await response.Content.ReadAsStringAsync();
-        //    return JsonConvert.DeserializeObject<T>(responseString);
-        //}
-
-        //public async Task<T> PutAsync<T>(string url, object payload)
-        //{
-        //    var json = JsonConvert.SerializeObject(payload);
-        //    var content = new StringContent(json, Encoding.UTF8, "application/json");
-        //    var response = await client.PutAsync(url, content);
-        //    var responseString = await response.Content.ReadAsStringAsync();
-        //    return JsonConvert.DeserializeObject<T>(responseString);
-        //}
-
-        //public async Task<T> DeleteAsync<T>(string url)
-        //{
-        //    var response = await client.DeleteAsync(url);
-        //    var responseString = await response.Content.ReadAsStringAsync();
-        //    return JsonConvert.DeserializeObject<T>(responseString);
-        //}
+        private string token;
+        public string Token
+        {
+            get => token;
+            set
+            {
+                token = value;
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+            }
+        }
 
         public void AddHeaders(string key, string value)
         {
@@ -61,6 +37,12 @@ namespace HTTP_Utility
         {
             var response = await client.GetAsync(url);
             var responseString = await response.Content.ReadAsStringAsync();
+            return responseString;
+        }
+
+        public async Task<string> GetAsync(string url, Dictionary<string, string> urlParam = null)
+        {
+            var responseString = await GetAsync(FormatUrl(url, urlParam));
             return responseString;
         }
 
@@ -86,9 +68,27 @@ namespace HTTP_Utility
             var json = JsonConvert.SerializeObject(input);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(url, content);
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(response.StatusCode);
+            }
             var responseString = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseString);
             return responseString;
         }
+
+        public async Task<string> PostAsync(string url, MultipartContent input)
+        {
+            var response = await client.PostAsync(url, input);
+            if (!response.IsSuccessStatusCode)
+            {
+                Console.WriteLine(response.StatusCode);
+            }
+            var responseString = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseString);
+            return responseString;
+        }
+
 
         public async Task<TResult> PostAsync<TResult>(string url, object input, Dictionary<string, string> urlParam = null)
         {
@@ -96,7 +96,7 @@ namespace HTTP_Utility
             return JsonConvert.DeserializeObject<TResult>(responseString);
         }
 
-        public async Task<TResult> PostAsync<TResult>(string url, MultipartFormDataContent input, Dictionary<string, string> urlParam = null)
+        public async Task<TResult> PostAsync<TResult>(string url, MultipartContent input, Dictionary<string, string> urlParam = null)
         {
             var responseString = await PostAsync(FormatUrl(url, urlParam), input);
             return JsonConvert.DeserializeObject<TResult>(responseString);
@@ -107,11 +107,11 @@ namespace HTTP_Utility
             var json = JsonConvert.SerializeObject(input);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var httpMessage = new HttpRequestMessage(new HttpMethod("Patch"), url);
-            var response = await client.SendAsync(httpMessage);
+            HttpResponseMessage response = await client.SendAsync(httpMessage);
             var responseString = await response.Content.ReadAsStringAsync();
             return responseString;
         }
-        public async Task<TResult> PatchAsync<TResult>(string url, MultipartFormDataContent input, Dictionary<string, string> urlParam = null)
+        public async Task<TResult> PatchAsync<TResult>(string url, MultipartContent input, Dictionary<string, string> urlParam = null)
         {
             var responseString = await PatchAsync(FormatUrl(url, urlParam), input);
             return JsonConvert.DeserializeObject<TResult>(responseString);

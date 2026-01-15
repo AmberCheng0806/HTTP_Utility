@@ -11,13 +11,15 @@ namespace HTTP_Utility
     public interface IHttpRequest
     {
         Task<string> GetAsync(string url);
+        Task<string> GetAsync(string url, Dictionary<string, string> urlParam = null);
         Task<TResult> GetAsync<TResult>(string url, Dictionary<string, string> urlParam = null);
         Task<string> PostAsync(string url, object input);
+        Task<string> PostAsync(string url, MultipartContent input);
         Task<TResult> PostAsync<TResult>(string url, object input, Dictionary<string, string> urlParam = null);
-        Task<TResult> PostAsync<TResult>(string url, MultipartFormDataContent input, Dictionary<string, string> urlParam = null);
+        Task<TResult> PostAsync<TResult>(string url, MultipartContent input, Dictionary<string, string> urlParam = null);
 
         Task<string> PatchAsync(string url, object input);
-        Task<TResult> PatchAsync<TResult>(string url, MultipartFormDataContent input, Dictionary<string, string> urlParam = null);
+        Task<TResult> PatchAsync<TResult>(string url, MultipartContent input, Dictionary<string, string> urlParam = null);
         Task<TResult> PatchAsync<TResult>(string url, object input, Dictionary<string, string> urlParam = null);
         Task<string> PutAsync(string url, object input);
         Task<TResult> PutAsync<TResult>(string url, object input, Dictionary<string, string> urlParam = null);
