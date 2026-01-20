@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{CBFADB8E-2E66-4B6D-A589-E0DFC75AB7E9}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>HTTP_Utility</RootNamespace>
     <AssemblyName>HTTP_Utility</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
@@ -55,13 +55,11 @@
     <Compile Include="BaseHttpHandler.cs" />
     <Compile Include="HttpUtility.cs" />
     <Compile Include="IHttpRequest.cs" />
+    <Compile Include="Interceptor.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Todo.cs" />
-    <Compile Include="Token.cs" />
     <Compile Include="AccessTokenModel.cs" />
-    <Compile Include="TokenModel.cs" />
-    <Compile Include="util.cs" />
     <Compile Include="Video.cs" />
   </ItemGroup>
   <ItemGroup>

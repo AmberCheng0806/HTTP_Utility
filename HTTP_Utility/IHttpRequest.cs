@@ -25,10 +25,10 @@ namespace HTTP_Utility
         Task<TResult> PutAsync<TResult>(string url, object input, Dictionary<string, string> urlParam = null);
         Task<string> DeleteAsync(string url, Dictionary<string, string> urlParam = null);
 
-        void AddHeaders(string key, string value);
+        //void AddHeaders(string key, string value);
 
         String BaseUrl { set; }
-        String Token { set; get; }
+        //String Token { set; get; }
 
     }
 }

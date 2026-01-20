@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Threading.Tasks;
@@ -11,27 +13,32 @@ namespace HTTP_Utility
 {
     public class HttpUtility : IHttpRequest
     {
-        private HttpClient client = new HttpClient();
+        private HttpClient client = null;
 
         public string BaseUrl
         {
             set => client.BaseAddress = new Uri(value = value.EndsWith("/") ? value : value + "/");
         }
-        private string token;
-        public string Token
+        //private string token;
+        //public string Token
+        //{
+        //    get => token;
+        //    set
+        //    {
+        //        token = value;
+        //        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+        //    }
+        //}
+
+        public HttpUtility(bool IsProxy = false, Interceptor interceptor = null)
         {
-            get => token;
-            set
-            {
-                token = value;
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-            }
+            client = new HttpClient(new BaseHttpHandler(IsProxy, interceptor));
         }
 
-        public void AddHeaders(string key, string value)
-        {
-            client.DefaultRequestHeaders.Add(key, value);
-        }
+        //public void AddHeaders(string key, string value)
+        //{
+        //    client.DefaultRequestHeaders.Add(key, value);
+        //}
 
         public async Task<string> GetAsync(string url)
         {

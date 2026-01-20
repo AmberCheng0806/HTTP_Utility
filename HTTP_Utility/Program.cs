@@ -17,18 +17,18 @@ namespace HTTP_Utility
     {
         static async Task Main(string[] args)
         {
-            HttpClientHandler handler = new HttpClientHandler()
-            {
-                UseProxy = true,
-                Proxy = new WebProxy("http://127.0.0.1:8888"),
+            //HttpClientHandler handler = new HttpClientHandler()
+            //{
+            //    UseProxy = true,
+            //    Proxy = new WebProxy("http://127.0.0.1:8888"),
 
-            };
+            //};
 
-            BaseHttpHandler interceptor = new BaseHttpHandler(handler);
+            //BaseHttpHandler interceptor = new BaseHttpHandler(handler);
 
-            HttpClient client = new HttpClient(interceptor);
+            //HttpClient client = new HttpClient(interceptor);
 
-            var response = await client.GetAsync("https://jsonplaceholder.typicode.com/posts/1");
+            //var response = await client.GetAsync("https://jsonplaceholder.typicode.com/posts/1");
 
 
 
