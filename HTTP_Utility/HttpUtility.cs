@@ -14,34 +14,36 @@ namespace HTTP_Utility
     public class HttpUtility : IHttpRequest
     {
         private HttpClient client = null;
+        private Interceptor interceptor = null;
 
+        private Uri baseUri = null;
+        private bool isProxy = false;
         public string BaseUrl
         {
-            set => client.BaseAddress = new Uri(value = value.EndsWith("/") ? value : value + "/");
+            set => baseUri = new Uri(value = value.EndsWith("/") ? value : value + "/");
         }
-        //private string token;
-        //public string Token
-        //{
-        //    get => token;
-        //    set
-        //    {
-        //        token = value;
-        //        client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-        //    }
-        //}
 
-        public HttpUtility(bool IsProxy = false, Interceptor interceptor = null)
+
+        public HttpUtility(bool isProxy = false, Interceptor interceptor = null)
         {
-            client = new HttpClient(new BaseHttpHandler(IsProxy, interceptor));
+            this.isProxy = isProxy;
+            this.interceptor = interceptor;
         }
 
-        //public void AddHeaders(string key, string value)
-        //{
-        //    client.DefaultRequestHeaders.Add(key, value);
-        //}
+
+        private void CreateHttpClient()
+        {
+            if (client == null || client.BaseAddress != baseUri)
+            {
+                client?.Dispose();
+                client = new HttpClient(new BaseHttpHandler(isProxy, interceptor));
+                client.BaseAddress = baseUri;
+            }
+        }
 
         public async Task<string> GetAsync(string url)
         {
+            CreateHttpClient();
             var response = await client.GetAsync(url);
             var responseString = await response.Content.ReadAsStringAsync();
             return responseString;
@@ -72,6 +74,7 @@ namespace HTTP_Utility
 
         public async Task<string> PostAsync(string url, object input)
         {
+            CreateHttpClient();
             var json = JsonConvert.SerializeObject(input);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await client.PostAsync(url, content);
@@ -86,6 +89,7 @@ namespace HTTP_Utility
 
         public async Task<string> PostAsync(string url, MultipartContent input)
         {
+            CreateHttpClient();
             var response = await client.PostAsync(url, input);
             if (!response.IsSuccessStatusCode)
             {
@@ -111,6 +115,7 @@ namespace HTTP_Utility
 
         public async Task<string> PatchAsync(string url, object input)
         {
+            CreateHttpClient();
             var json = JsonConvert.SerializeObject(input);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var httpMessage = new HttpRequestMessage(new HttpMethod("Patch"), url);
@@ -132,6 +137,7 @@ namespace HTTP_Utility
 
         public async Task<string> PutAsync(string url, object input)
         {
+            CreateHttpClient();
             var json = JsonConvert.SerializeObject(input);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
             var response = await client.PutAsync(url, content);
@@ -147,6 +153,7 @@ namespace HTTP_Utility
 
         public async Task<string> DeleteAsync(string url, Dictionary<string, string> urlParam = null)
         {
+            CreateHttpClient();
             var response = await client.DeleteAsync(FormatUrl(url, urlParam));
             var responseString = await response.Content.ReadAsStringAsync();
             return responseString;
