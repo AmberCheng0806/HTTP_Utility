@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace HTTP_Utility
 {
@@ -15,8 +16,8 @@ namespace HTTP_Utility
         Task<TResult> GetAsync<TResult>(string url, Dictionary<string, string> urlParam = null);
         Task<string> PostAsync(string url, object input);
         Task<string> PostAsync(string url, MultipartContent input);
-        Task<TResult> PostAsync<TResult>(string url, object input, Dictionary<string, string> urlParam = null);
-        Task<TResult> PostAsync<TResult>(string url, MultipartContent input, Dictionary<string, string> urlParam = null);
+        Task<TResult> PostAsync<TResult>(string url, object input, Dictionary<string, string> urlParam = null, JsonSerializerSettings jsonSerializerSettings = null);
+        Task<TResult> PostAsync<TResult>(string url, MultipartContent input, Dictionary<string, string> urlParam = null, JsonSerializerSettings jsonSerializerSettings = null);
 
         Task<string> PatchAsync(string url, object input);
         Task<TResult> PatchAsync<TResult>(string url, MultipartContent input, Dictionary<string, string> urlParam = null);
@@ -25,10 +26,9 @@ namespace HTTP_Utility
         Task<TResult> PutAsync<TResult>(string url, object input, Dictionary<string, string> urlParam = null);
         Task<string> DeleteAsync(string url, Dictionary<string, string> urlParam = null);
 
-        //void AddHeaders(string key, string value);
+        void AddHeaders(string key, string value);
 
         String BaseUrl { set; }
-        //String Token { set; get; }
 
     }
 }

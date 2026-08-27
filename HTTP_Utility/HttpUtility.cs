@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,16 @@ namespace HTTP_Utility
                 client = new HttpClient(new BaseHttpHandler(isProxy, interceptor));
                 client.BaseAddress = baseUri;
             }
+        }
+
+        public void AddHeaders(string key, string value)
+        {
+            CreateHttpClient();
+            if (client.DefaultRequestHeaders.Contains(key))
+            {
+                client.DefaultRequestHeaders.Remove(key);
+            }
+            client.DefaultRequestHeaders.Add(key, value);
         }
 
         public async Task<string> GetAsync(string url)
@@ -101,16 +112,16 @@ namespace HTTP_Utility
         }
 
 
-        public async Task<TResult> PostAsync<TResult>(string url, object input, Dictionary<string, string> urlParam = null)
+        public async Task<TResult> PostAsync<TResult>(string url, object input, Dictionary<string, string> urlParam = null, JsonSerializerSettings jsonSerializerSettings = null)
         {
             var responseString = await PostAsync(FormatUrl(url, urlParam), input);
-            return JsonConvert.DeserializeObject<TResult>(responseString);
+            return JsonConvert.DeserializeObject<TResult>(responseString, jsonSerializerSettings);
         }
 
-        public async Task<TResult> PostAsync<TResult>(string url, MultipartContent input, Dictionary<string, string> urlParam = null)
+        public async Task<TResult> PostAsync<TResult>(string url, MultipartContent input, Dictionary<string, string> urlParam = null, JsonSerializerSettings jsonSerializerSettings = null)
         {
             var responseString = await PostAsync(FormatUrl(url, urlParam), input);
-            return JsonConvert.DeserializeObject<TResult>(responseString);
+            return JsonConvert.DeserializeObject<TResult>(responseString, jsonSerializerSettings);
         }
 
         public async Task<string> PatchAsync(string url, object input)

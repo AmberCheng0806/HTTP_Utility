@@ -9,10 +9,15 @@ namespace HTTP_Utility
 {
     public class Interceptor
     {
-        public Func<HttpRequestMessage, Task> Func { get; set; }
-        public async Task AddRequest(HttpRequestMessage request)
+        public Func<HttpRequestMessage, Task> RequestHandlerAsync { get; set; }
+        public Action<HttpRequestMessage> RequestHandler { get; set; }
+        public async Task AddRequestAsync(HttpRequestMessage request)
         {
-            await Func?.Invoke(request);
+            if (RequestHandlerAsync != null) await RequestHandlerAsync.Invoke(request);
+        }
+        public void AddRequest(HttpRequestMessage request)
+        {
+            RequestHandler?.Invoke(request);
         }
     }
 }

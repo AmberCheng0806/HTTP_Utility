@@ -12,7 +12,6 @@ namespace HTTP_Utility
 {
     internal class BaseHttpHandler : DelegatingHandler
     {
-        //private Token Token = new Token();
         private Interceptor Interceptor;
 
         public BaseHttpHandler(bool IsProxy, Interceptor interceptor)
@@ -28,10 +27,8 @@ namespace HTTP_Utility
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            //var token = await Token.GetAccessToken();
-            //request.Headers.Add("Authorization", $"Bearer {token}");
-            if (Interceptor != null)
-                await Interceptor.AddRequest(request);
+            if (Interceptor != null && Interceptor.RequestHandlerAsync != null) { await Interceptor.AddRequestAsync(request); }
+            else if (Interceptor != null && Interceptor.RequestHandlerAsync == null) { Interceptor.AddRequest(request); };
             return await base.SendAsync(request, cancellationToken);
         }
     }
